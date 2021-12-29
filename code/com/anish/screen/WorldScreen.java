@@ -2,10 +2,11 @@ package com.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Scanner;
-import com.anish.calabashbros.Calabash;
+
 import com.anish.calabashbros.World;
-import com.anish.calabashbros.MazeGenerator;
+
 import com.anish.calabashbros.Thing;
 import com.anish.calabashbros.Wall;
 import com.anish.calabashbros.Floor;
@@ -13,11 +14,13 @@ import com.anish.calabashbros.Floor2;
 import com.anish.calabashbros.Floor3;
 import com.anish.calabashbros.Floor4;
 import com.anish.calabashbros.Letter;
-import com.anish.calabashbros.Arm;
+import com.anish.calabashbros.ARM;
 import java.util.Random;
 import com.anish.calabashbros.Map;
 import asciiPanel.AsciiPanel;
+import java.io.*;
 public class WorldScreen implements Screen{
+    int gameover=1;
     int over=1;
     int ct1=0;
     int ct2=0;
@@ -33,7 +36,7 @@ public class WorldScreen implements Screen{
     int [][]b={{3,31},{4,31},{25,31},{26,31},{3,8},{4,8},{25,8},{26,8}};
     int [][]b1={{3,6},{4,6},{25,6},{26,6},{3,7},{4,7},{25,7},{26,7}};
     int [][]b2={{3,33},{4,33},{25,33},{26,33},{3,32},{4,32},{25,32},{26,32}};
-    Arm []t=new Arm[1000];
+    ARM []t=new ARM[1000];
     int num=0;
     String[] sortSteps;
     Color []monster =new Color[256];
@@ -70,11 +73,11 @@ public class WorldScreen implements Screen{
             }
         }
         for(int k=0;k<8;k++){
-            Arm s=new Arm(177, c[3], world, w, b1[k], 4);
+            ARM s=new ARM(177, c[3], world, w, b1[k], 4);
             t[num++]=s;
         }
         for(int k=0;k<8;k++){
-            Arm s=new Arm(177, c[3], world, w, b2[k], 3);
+            ARM s=new ARM(177, c[3], world, w, b2[k], 3);
             t[num++]=s;
         }
     }
@@ -83,19 +86,7 @@ public class WorldScreen implements Screen{
         return plan.split("\n");
     }
 
-    private void execute(Calabash[] bros, String step) {
-        String[] couple = step.split("<->");
-        getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros, Integer.parseInt(couple[1])));
-    }
-
-    private Calabash getBroByRank(Calabash[] bros, int rank) {
-        for (Calabash bro : bros) {
-            if (bro.getRank() == rank) {
-                return bro;
-            }
-        }
-        return null;
-    }
+    
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
@@ -105,7 +96,8 @@ public class WorldScreen implements Screen{
                 terminal.write(world.get(i, 0).getGlyph(), i, 0, world.get(i, 0).getColor());
             }
             over=0;
-            
+            ct1=ct2=0;
+            return;
         }
         if(ct2==8){
             
@@ -115,6 +107,8 @@ public class WorldScreen implements Screen{
             }
             
            over=0;
+           ct1=ct2=0;
+           return;
         }
         if(over==1)
         for (int x = 0; x < World.WIDTH; x++) {
@@ -136,33 +130,96 @@ public class WorldScreen implements Screen{
         switch(key.getKeyCode()){
 
             case KeyEvent.VK_1:
-                Arm s=new Arm(2,c[rt],world,a[rt],b[0],1);
+                ARM s=new ARM(2,c[rt],world,a[rt],b[0],1);
                 t[num++]=s;
                 break;
             case KeyEvent.VK_2:
-                Arm s1=new Arm(2,c[rt],world,a[rt],b[1],1);
+                ARM s1=new ARM(2,c[rt],world,a[rt],b[1],1);
                 t[num++]=s1;
                 break;
             case KeyEvent.VK_3:
-                Arm s2=new Arm(2,c[rt],world,a[rt],b[2],1);
+                ARM s2=new ARM(2,c[rt],world,a[rt],b[2],1);
                 t[num++]=s2;
                 break;
             case KeyEvent.VK_4:
-                Arm s3=new Arm(2,c[rt],world,a[rt],b[3],1);
+                ARM s3=new ARM(2,c[rt],world,a[rt],b[3],1);
                 t[num++]=s3;
+                break;    
+        }
+        switch(key.getKeyCode()){
+            case KeyEvent.VK_R:
+                over=2;
+                break;
+            case KeyEvent.VK_E:
+                gameover=0;
                 break;
         }
+        
         return this;
     }
+    
 
-    public Screen re(){
-  
+    public Screen A() throws  IOException,ClassNotFoundException{
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+        in = new FileInputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hhh.txt");
+        int no=in.read();//读取个体数量
+        int n1=in.read();
+        int n2=in.read();
+        in.close();
+        if(n1<ct1){
+            n1=ct1;
+        }
+        else ct1=n1;
+        if(n2<ct2){
+            n2=ct2;
+        }
+        else ct2=n2;
+        if(no<num){//更新文件内容
+            no=num;
+        }
+        else{//更新地图
+            num=no;
+            FileInputStream fileInputStream = new FileInputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hh.txt");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            for(int i=0;i<no;i++){
+                t[i]=(ARM)objectInputStream.readObject();
+            }
+            objectInputStream.close();
+        }
+        if(gameover==0) {
+            out=new FileOutputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hhh.txt");
+            out.write(0);
+            out.write(0);
+            out.write(0);
+            System.exit(-1);
+            return null;
+        }
+        if(over==2) {
+            out=new FileOutputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hhh.txt");
+            out.write(0);
+            out.write(0);
+            out.write(0);
+            Screen n=new WorldScreen();
+            over=1;
+            return n;
+        }
+
+        if(over==0) {
+            out=new FileOutputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hhh.txt");
+            out.write(0);
+            out.write(0);
+            out.write(0);
+           return this; 
+        }
+        
         int rt=r.nextInt(200);
         if(over==1)
         if(rt<5){
             int rs=r.nextInt(4);
             int rr=r.nextInt(4);
-            Arm s=new Arm(2,c[rs],world,a[rs],b[4+rr],2);
+            ARM s=new ARM(2,c[rs],world,a[rs],b[4+rr],2);
             t[num++]=s;
         }
         count++;
@@ -184,6 +241,33 @@ public class WorldScreen implements Screen{
                     t[i].move(count);
                     world.put(t[i], t[i].getX(), t[i].getY());
             }
+            }
+        }
+        
+        FileOutputStream fileOutputStream = new FileOutputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hh.txt");
+        ObjectOutputStream objectOutputStream  = new ObjectOutputStream(fileOutputStream);
+        for(int i=0;i<no;i++){
+            //objectOutputStream.writeUnshared(t[i]);
+            objectOutputStream.writeObject(t[i]);
+        }
+        objectOutputStream.flush();
+        objectOutputStream.close();
+        out=new FileOutputStream("/home/njucs/Desktop/java2021/jwork-2021/jw05-chenxiangyu01/hhh.txt");
+        out.write(no);
+        out.write(n1);
+        out.write(n2);
+        }catch(NotSerializableException e){
+            System.out.println(e.getMessage());
+        }catch(ClassNotFoundException e){
+            System.out.println(e.getMessage());
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }finally {
+            if (in != null) {
+                in.close(); //记得关
+            }
+            if (out != null) {
+                out.close();//记得关
             }
         }
         return this;

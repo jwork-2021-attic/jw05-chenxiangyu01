@@ -1,11 +1,12 @@
 package com.anish.calabashbros;
 
 import java.awt.Color;
+import java.io.*;
 
 
 
-
-public class Arm extends Creature {
+public class ARM extends Creature implements Serializable{
+    private static final long serialVersionUID = 1L; 
     private int index;
     private int health;
     private int attack;
@@ -15,8 +16,8 @@ public class Arm extends Creature {
     private int xPo;
     private int yPo;
     private int isMove;
-    public Arm(int ty,Color color, World world,int []property,int []Po,int in) {
-            super(color, (char) ty, world);
+    public ARM(int ty,Color color, World world,int []property,int []Po,int in) {
+        super(color, (char) ty, world);
         health=property[0];
         attack=property[1];
         defence=property[2];
@@ -67,7 +68,7 @@ public class Arm extends Creature {
         else return false;
     }
     //索敌
-    public void findAnemy(Arm []a1){//有敌人，置isMove为0
+    public void findAnemy(ARM []a1){//有敌人，置isMove为0
         int k;
         if(index==1) k=1;
         else k=-1;
@@ -102,5 +103,15 @@ public class Arm extends Creature {
     }
     public int getIndex(){
         return index;
+    }
+
+    private void writeObject(ObjectOutputStream oos)  throws IOException {
+        oos.defaultWriteObject();
+        oos.writeObject(this);
+    }
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+        ARM k=(ARM)ois.readObject();
+        
     }
 }

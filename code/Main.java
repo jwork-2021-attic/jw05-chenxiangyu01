@@ -9,7 +9,7 @@ import com.anish.calabashbros.World;
 import com.anish.screen.Screen;
 import com.anish.screen.WorldScreen;
 
-
+import java.io.*;
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 
@@ -35,9 +35,14 @@ public class Main extends JFrame implements KeyListener,Runnable{
         screen.displayOutput(terminal);
         super.repaint();
     }
-
+    private int exit=1;
     public void go(){
-        screen=screen.re();
+        //screen=screen.re();
+        try{
+        screen=screen.A();
+        if(screen==null) exit=0;
+        }catch(Exception a){}
+        
         repaint();
     }
     @Override
@@ -56,20 +61,23 @@ public class Main extends JFrame implements KeyListener,Runnable{
     public void keyReleased(KeyEvent e) {
 
     }
-    public static void main(String[] args) {
+    public static void main(String[] args){
         
         Main app = new Main();
-        new Thread(app).start();
+        Thread t=new Thread(app);
+        t.start();
+        
         app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setVisible(true);
     }
 
     @Override
     public void run(){
-        while(true){
+
+        while(exit==1){
             try{
                 Thread.sleep(200);
-            }catch(Exception d){}
+            }catch(Exception a){}
             go();
         }
     }

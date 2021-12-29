@@ -1,7 +1,8 @@
 package com.anish.calabashbros;
 
-public class Tile<T extends Thing> {
-
+import java.io.*;
+public class Tile <T extends Thing >implements Serializable{
+    private static final long serialVersionUID = 1L; 
     private T thing;
     private int xPos;
     private int yPos;

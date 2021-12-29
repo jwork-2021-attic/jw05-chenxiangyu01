@@ -1,9 +1,9 @@
 package com.anish.calabashbros;
 
 import java.awt.Color;
-
-public class Thing {
-
+import java.io.*;
+public class Thing implements Serializable{
+    private static final long serialVersionUID = 1016524813918100547L; 
     protected World world;
 
     public Tile<? extends Thing> tile;
@@ -25,7 +25,11 @@ public class Thing {
         this.glyph = glyph;
         this.world = world;
     }
-
+    Thing(){
+        this.color=null;
+        this.glyph = (char)176;
+        this.world = null;
+    }
     private final Color color;
 
     public Color getColor() {
